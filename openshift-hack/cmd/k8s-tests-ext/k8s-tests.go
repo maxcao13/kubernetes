@@ -188,6 +188,7 @@ func withExcludedTestsFilter(baseExpr string) string {
 		"[Slow]",
 		"[Flaky]",
 		"[Local]",
+		"[Feature:HPA]", // We enable these tests in it's own prow job through test-kubernetes-e2e.sh
 	}
 
 	filter := ""

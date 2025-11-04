@@ -42,7 +42,7 @@ parallel)
   DEFAULT_TEST_ARGS="-skip=\[Serial\]|${COMMON_SKIPS}"
   # Use the same number of nodes - 30 - as specified for the parallel
   # suite defined in origin.
-  NODES=${NODES:-30}
+  NODES=${NODES:-10}
   ;;
 *)
   echo >&2 "Unsupported test suite '${TEST_SUITE}'"
@@ -85,6 +85,7 @@ ginkgo \
   --timeout="24h" \
   --output-interceptor-mode=none \
   -nodes "${NODES}" -no-color ${KUBE_E2E_TEST_ARGS} \
+  -focus="\[Feature:HPA\]" \
   "$( which k8s-e2e.test )" -- \
   -node-os-distro "custom" \
   -report-dir "${test_report_dir}" \

@@ -242,9 +242,9 @@ func scaleUp(ctx context.Context, name string, kind schema.GroupVersionKind, res
 	}
 	st := &HPAScaleTest{
 		initPods:         1,
-		perPodCPURequest: 500,
-		perPodMemRequest: 500,
-		targetValue:      getTargetValueByType(100, 20, metricTargetType),
+		perPodCPURequest: 200,
+		perPodMemRequest: 200,
+		targetValue:      getTargetValueByType(40, 20, metricTargetType),
 		minPods:          1,
 		maxPods:          5,
 		firstScale:       3,
@@ -254,12 +254,12 @@ func scaleUp(ctx context.Context, name string, kind schema.GroupVersionKind, res
 		metricTargetType: metricTargetType,
 	}
 	if resourceType == cpuResource {
-		st.initCPUTotal = 250
-		st.cpuBurst = 700
+		st.initCPUTotal = 100
+		st.cpuBurst = 280
 	}
 	if resourceType == memResource {
-		st.initMemTotal = 250
-		st.memBurst = 700
+		st.initMemTotal = 100
+		st.memBurst = 280
 	}
 	st.run(ctx, name, kind, f)
 }
@@ -271,9 +271,9 @@ func scaleDown(ctx context.Context, name string, kind schema.GroupVersionKind, r
 	}
 	st := &HPAScaleTest{
 		initPods:         5,
-		perPodCPURequest: 500,
-		perPodMemRequest: 500,
-		targetValue:      getTargetValueByType(150, 30, metricTargetType),
+		perPodCPURequest: 200,
+		perPodMemRequest: 200,
+		targetValue:      getTargetValueByType(60, 30, metricTargetType),
 		minPods:          1,
 		maxPods:          5,
 		firstScale:       3,
@@ -284,11 +284,11 @@ func scaleDown(ctx context.Context, name string, kind schema.GroupVersionKind, r
 		metricTargetType: metricTargetType,
 	}
 	if resourceType == cpuResource {
-		st.initCPUTotal = 325
+		st.initCPUTotal = 130
 		st.cpuBurst = 10
 	}
 	if resourceType == memResource {
-		st.initMemTotal = 325
+		st.initMemTotal = 130
 		st.memBurst = 10
 	}
 	st.run(ctx, name, kind, f)
@@ -352,9 +352,9 @@ func (st *HPAContainerResourceScaleTest) run(ctx context.Context, name string, k
 func scaleUpContainerResource(ctx context.Context, name string, kind schema.GroupVersionKind, resourceType v1.ResourceName, metricTargetType autoscalingv2.MetricTargetType, f *framework.Framework) {
 	st := &HPAContainerResourceScaleTest{
 		initPods:               1,
-		perContainerCPURequest: 500,
-		perContainerMemRequest: 500,
-		targetValue:            getTargetValueByType(100, 20, metricTargetType),
+		perContainerCPURequest: 200,
+		perContainerMemRequest: 200,
+		targetValue:            getTargetValueByType(40, 20, metricTargetType),
 		minPods:                1,
 		maxPods:                5,
 		firstScale:             3,
@@ -366,12 +366,12 @@ func scaleUpContainerResource(ctx context.Context, name string, kind schema.Grou
 		sidecarType:            e2eautoscaling.Idle,
 	}
 	if resourceType == cpuResource {
-		st.initCPUTotal = 250
-		st.cpuBurst = 700
+		st.initCPUTotal = 100
+		st.cpuBurst = 280
 	}
 	if resourceType == memResource {
-		st.initMemTotal = 250
-		st.memBurst = 700
+		st.initMemTotal = 100
+		st.memBurst = 280
 	}
 	st.run(ctx, name, kind, f)
 }
@@ -384,14 +384,14 @@ func scaleOnIdleSideCar(ctx context.Context, name string, kind schema.GroupVersi
 	}
 	st := &HPAContainerResourceScaleTest{
 		initPods:               1,
-		initCPUTotal:           125,
-		perContainerCPURequest: 250,
+		initCPUTotal:           50,
+		perContainerCPURequest: 100,
 		targetValue:            20,
 		minPods:                1,
 		maxPods:                5,
 		firstScale:             3,
 		firstScaleStasis:       stasis,
-		cpuBurst:               500,
+		cpuBurst:               200,
 		secondScale:            5,
 		resourceType:           resourceType,
 		metricTargetType:       metricTargetType,
@@ -409,12 +409,12 @@ func doNotScaleOnBusySidecar(ctx context.Context, name string, kind schema.Group
 	}
 	st := &HPAContainerResourceScaleTest{
 		initPods:               1,
-		initCPUTotal:           250,
-		perContainerCPURequest: 500,
+		initCPUTotal:           100,
+		perContainerCPURequest: 200,
 		targetValue:            20,
 		minPods:                1,
 		maxPods:                5,
-		cpuBurst:               700,
+		cpuBurst:               280,
 		sidecarStatus:          e2eautoscaling.Enable,
 		sidecarType:            e2eautoscaling.Busy,
 		resourceType:           resourceType,
@@ -479,11 +479,11 @@ func (st *HPAPodResourceScaleTest) run(ctx context.Context, name string, kind sc
 func scaleUpPodLevelResources(ctx context.Context, name string, kind schema.GroupVersionKind, metricSourceType autoscalingv2.MetricSourceType, f *framework.Framework) {
 	st := &HPAPodResourceScaleTest{
 		metricSourceType:       metricSourceType,
-		perPodRequests:         resourceRequirements(500, 500),
+		perPodRequests:         resourceRequirements(200, 200),
 		perContainerCPURequest: 0,
 		perContainerMemRequest: 0,
-		initCPUTotal:           250,
-		cpuBurst:               700,
+		initCPUTotal:           100,
+		cpuBurst:               280,
 		targetValue:            20,
 		minPods:                1,
 		maxPods:                5,
@@ -500,10 +500,10 @@ func scaleUpPodLevelResources(ctx context.Context, name string, kind schema.Grou
 		// The values below make sure that HPA is autoscaling based on
 		// perContainerCPURequest instead of perPodRequests (HPA would not scale
 		// up if it was considering perPodRequests).
-		st.perContainerCPURequest = 250
-		st.perContainerMemRequest = 250
-		st.initCPUTotal = 125
-		st.cpuBurst = 350
+		st.perContainerCPURequest = 100
+		st.perContainerMemRequest = 100
+		st.initCPUTotal = 50
+		st.cpuBurst = 140
 	}
 	st.run(ctx, name, kind, f)
 }
